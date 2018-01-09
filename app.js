@@ -14,7 +14,7 @@ App = function()
     this.musicMuted = true;
     this.soundMuted = true;
     this.socialEnabled = false;
-    this.gameOver = false;
+    this.gameOver = true;
 
     // Scores
     this.scores = [
@@ -109,7 +109,7 @@ App = function()
         wade.loadImage('images/orange_button.png');
         wade.loadImage('images/black_button.png');
         wade.loadImage('images/background_pink.png');
-        wade.loadImage('images/score_container_v2.png');
+        wade.loadImage('images/score_container_v3.png');
         wade.loadImage('images/background.png');
         wade.loadImage('images/menuTop.png');
         wade.loadImage('images/menuTopAlt.png');
@@ -760,7 +760,7 @@ App = function()
         // Remove buttons
         wade.removeSceneObjects(wade.getSceneObjects('removeOnGameOver', true));
 
-        var circleSprite = new Sprite('images/score_container_v2.png', this.layers.boardBack);
+        var circleSprite = new Sprite('images/score_container_v3.png', this.layers.boardBack);
         var timeOutCircle = new SceneObject(circleSprite);
         timeOutCircle.setPosition(0, -wade.getScreenHeight()/4 + 130);
         wade.addSceneObject(timeOutCircle);
