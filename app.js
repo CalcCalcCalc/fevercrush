@@ -2,7 +2,7 @@
 App = function()
 {
     var self = this; // Main app context
-    var gameLength = 60;
+    var gameLength = 10;
 
     // Layers to use for rendering
     this.layers = {background:17, boardBack:16, board:15, boardFront:14, front:13};
@@ -14,7 +14,7 @@ App = function()
     this.musicMuted = true;
     this.soundMuted = true;
     this.socialEnabled = false;
-    this.gameOver = true;
+    this.gameOver = false;
 
     // Scores
     this.scores = [
@@ -147,6 +147,7 @@ App = function()
         wade.loadImage('images/egg.png');
         wade.loadImage('images/play_again_hover_click.png');
         wade.loadImage('images/play_again_btn.png');
+        wade.loadImage('images/back_btn.png');
 
         // Shiny
         wade.loadImage('images/shatter.png');
@@ -778,7 +779,7 @@ App = function()
                 totalScoreText.cache();
                 totalScoreText.setDrawFunction(wade.drawFunctions.fadeOpacity_(0.0, 1.0, 1.0, timeOutSprite.getDrawFunction(), function()
                 {
-                    var totalScoreNumber = new TextSprite(""+self.scoreObject.getBehavior().getValue(),'140px PT_Sans-Bold', fvr_pink, 'center', self.layers.front);
+                    var totalScoreNumber = new TextSprite(""+self.scoreObject.getBehavior().getValue(),'140px PT_Sans-Bold', fvr_pink, 'left', self.layers.front);
                     totalScoreNumber.cache();
                     totalScoreNumber.setDrawFunction(wade.drawFunctions.fadeOpacity_(0.0, 1.0, 1.0, timeOutSprite.getDrawFunction(), function()
                     {
@@ -927,29 +928,37 @@ App = function()
                                 {
                                     var nameErrorText = new TextSprite('Enter a name champ!','32px PT_Sans-Regular', 'yellow', 'center', self.layers.front);
                                     var nameError = new SceneObject(nameErrorText);
-                                    nameError.setPosition(0, 570);
+                                    nameError.setPosition(0, 420);
                                     wade.addSceneObject(nameError);
                                 }
                             };
-                            submitButton.setPosition(0, wade.getScreenHeight()/4 + 200);
+                            submitButton.setPosition(0, wade.getScreenHeight()/4 + 40);
                             var congratsTextSprite1 = new TextSprite('Wow! Look at that!', '120px PT_Sans-Bold', 'white', 'center', self.layers.front)
                             var congratsTextSprite2 = new TextSprite('You made the top scores!', '64px PT_Sans-Regular', 'white', 'center', self.layers.front);
-                            var congratsTextSprite3 = new TextSprite('Please add your name below.', '32px PT_Sans-Regular', 'white', 'center', self.layers.front);
-                            titleObject.addSprite(congratsTextSprite1, {x:0, y:200});
-                            titleObject.addSprite(congratsTextSprite2, {x:0, y:300});
-                            titleObject.addSprite(congratsTextSprite3, {x:0, y:370});
+                            //var congratsTextSprite3 = new TextSprite('Please add your name below.', '32px PT_Sans-Regular', 'white', 'center', self.layers.front);
+                            titleObject.addSprite(congratsTextSprite1, {x:0, y:150});
+                            titleObject.addSprite(congratsTextSprite2, {x:0, y:220});
+                            //titleObject.addSprite(congratsTextSprite3, {x:0, y:270});
                             congratsTextSprite1.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, congratsTextSprite1.getDrawFunction()));
                             congratsTextSprite2.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, congratsTextSprite2.getDrawFunction()));
-                            congratsTextSprite3.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, congratsTextSprite3.getDrawFunction()));
+                            //congratsTextSprite3.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, congratsTextSprite3.getDrawFunction()));
 
                             submitButtonsprite.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, submitButtonsprite.getDrawFunction()));                            
                             wade.addSceneObject(submitButton, true);
+                            
+                            var backSprite = new Sprite('images/back_btn.png', self.layers.front); //self.layers.front                            
+                            var backButton = new SceneObject(backSprite);
+                            var backText1 = new TextSprite('or go to ', '42px PT_Sans-Regular', 'white', 'center', self.layers.front);
+                            var backText2 = new TextSprite('home', '42px PT_Sans-Bold', 'white', 'center', self.layers.front);
+                            backButton.addSprite(backText1, {x:-52, y:110});
+                            backButton.addSprite(backText2, {x:72, y:110});
+                            backSprite.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, backSprite.getDrawFunction()));                            
+                            backText1.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, backText1.getDrawFunction()));                            
+                            backText2.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, backText2.getDrawFunction()));                            
 
-                            var homeText = new TextSprite('or click here to go back to home screen', '42px PT_Sans-Regular', 'white', 'center', self.layers.front);
-                            var homeButton = new SceneObject(homeText);
-                            homeButton.setPosition(0, 850);
+                            backButton.setPosition(0, 700);
 
-                            homeButton.onMouseUp = function() // go home
+                            backButton.onMouseUp = function() // go home
                             {
                                 if ($('#personName').val() !== ""){
                                     addScore();
@@ -960,13 +969,12 @@ App = function()
                                 {
                                     var nameErrorText = new TextSprite('Enter a name champ!','32px PT_Sans-Regular', 'yellow', 'center', self.layers.front);
                                     var nameError = new SceneObject(nameErrorText);
-                                    nameError.setPosition(0, 570);
+                                    nameError.setPosition(0, 420);
                                     wade.addSceneObject(nameError);
                                 }
                             }
 
-                            homeText.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, homeText.getDrawFunction()));                            
-                            wade.addSceneObject(homeButton, true);
+                            wade.addSceneObject(backButton, true);
 
                             $('#personName').show();
 
@@ -1112,7 +1120,7 @@ App = function()
                                 };
                                 
                             };
-                            submitButton.setPosition(0, wade.getScreenHeight()/4 + 200);
+                            submitButton.setPosition(0, wade.getScreenHeight()/4 + 40);
                             submitButtonsprite.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, submitButtonsprite.getDrawFunction()));                            
                             wade.addSceneObject(submitButton, true);
                             var sorryTextSprite1 = new TextSprite('Good Effort', '120px PT_Sans-Bold', 'white', 'center', self.layers.front)
@@ -1122,26 +1130,43 @@ App = function()
                             sorryTextSprite1.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, sorryTextSprite1.getDrawFunction()));
                             sorryTextSprite2.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, sorryTextSprite2.getDrawFunction()));
 
-                            var homeText = new TextSprite('or click here to go back to home screen', '42px PT_Sans-Regular', 'white', 'center', self.layers.front);
-                            var homeButton = new SceneObject(homeText);
-                            homeButton.setPosition(0, 850);
+                            var backSprite = new Sprite('images/back_btn.png', self.layers.front); //self.layers.front                            
+                            var backButton = new SceneObject(backSprite);
+                            var backText1 = new TextSprite('or go to ', '42px PT_Sans-Regular', 'white', 'center', self.layers.front);
+                            var backText2 = new TextSprite('home', '42px PT_Sans-Bold', 'white', 'center', self.layers.front);
+                            backButton.addSprite(backText1, {x:-52, y:110});
+                            backButton.addSprite(backText2, {x:72, y:110});
+                            backSprite.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, backSprite.getDrawFunction()));                            
+                            backText1.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, backText1.getDrawFunction()));                            
+                            backText2.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, backText2.getDrawFunction()));                            
 
-                            homeButton.onMouseUp = function() // go home
+                            backButton.setPosition(0, 700);
+
+                            backButton.onMouseUp = function() // go home
                             {
-                                wade.clearScene();
-                                self.game();
+                                if ($('#personName').val() !== ""){
+                                    addScore();
+                                    wade.clearScene();
+                                    self.game();
+                                }
+                                else
+                                {
+                                    var nameErrorText = new TextSprite('Enter a name champ!','32px PT_Sans-Regular', 'yellow', 'center', self.layers.front);
+                                    var nameError = new SceneObject(nameErrorText);
+                                    nameError.setPosition(0, 420);
+                                    wade.addSceneObject(nameError);
+                                }
                             }
 
-                            homeText.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, homeText.getDrawFunction()));                            
-                            wade.addSceneObject(homeButton, true);
+                            wade.addSceneObject(backButton, true);
 
                         }
                     }));
-                    titleObject.addSprite(totalScoreNumber, {x:25, y: -320});
+                    titleObject.addSprite(totalScoreNumber, {x:-210, y: -275});
                 }));
-                titleObject.addSprite(totalScoreText, {x:-100, y: -450});
+                titleObject.addSprite(totalScoreText, {x:-100, y: -425});
             }));
-            titleObject.addSprite(timeOutSprite, {x:0, y: -wade.getScreenHeight()/2 + 125});
+            titleObject.addSprite(timeOutSprite, {x:0, y: -wade.getScreenHeight()/2 + 150});
         }));
         var titleObject = new SceneObject(backgroundSprite);
         titleObject.setPosition(0, 0);
