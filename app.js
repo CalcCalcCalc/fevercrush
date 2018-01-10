@@ -2,7 +2,7 @@
 App = function()
 {
     var self = this; // Main app context
-    var gameLength = 60;
+    var gameLength = 10;
 
     // Layers to use for rendering
     this.layers = {background:17, boardBack:16, board:15, boardFront:14, front:13};
@@ -262,118 +262,7 @@ App = function()
         }
         playButton.onMouseUp = function()
         {
-            wade.clearScene();
-            if(!self.musicMuted)
-            {
-                self.musicPlaying = true;
-                self.musicSource = wade.playAudio('sounds/Surreal-Chase.ogg', true);
-            }
-
-            // Draw background and foreground
-            var backgroundSprite = new Sprite('images/background.png', self.layers.background);
-            backgroundSprite.setSize(1080, 1920);
-            var gameTopSprite = new Sprite('images/gameTop.png', self.layers.front);
-
-            var graphics = new SceneObject(null);
-            graphics.addSprite(backgroundSprite, {x:0, y:wade.getScreenHeight()/2 - backgroundSprite.getSize().y/2});
-            graphics.addSprite(gameTopSprite, {x:0, y:-backgroundSprite.getSize().y/2 + 74}); // Evil magic numbers
-            graphics.removeOnGameOver = true;
-            wade.addSceneObject(graphics);
-
-            // Use Match3 behavior to create the game
-            this.theGame = new SceneObject(null, Match3);
-            wade.addSceneObject(this.theGame, true, {match3:
-            {
-                numCells: {x:7, y:10},
-                cellSize: {x:150, y:150},
-                margin: 5,
-                items: [
-                //     {normal: 'images/icon_caller.png', special:'', probability:20},
-                //     {normal: 'images/icon_heart.png', special:'', probability:20},
-                //     {normal: 'images/icon_info.png', special:'', probability:20},
-                //     {normal: 'images/icon_nurse.png', special:'', probability:20},
-                //     {normal: 'images/icon_percent.png', special:'', probability:20}],
-                //     //{normal: 'images/icon_pound.png', special:'images/greenGlow.png', probability:12.5},
-                //     //{normal: 'images/icon_ribbon.png', special:'images/yellowGlow.png', probability:12.5},
-                //     //{normal: 'images/icon_umbrella.png', special:'images/yellowGlow.png', probability:12.5}],
-                // specialFive: 'images/icon_bag.png',
-                    {normal: 'images/alfred.png', special:'', probability:20},
-                    {normal: 'images/bertie.png', special:'', probability:20},
-                    {normal: 'images/carlton.png', special:'', probability:20},
-                    {normal: 'images/denny.png', special:'', probability:20},
-                    {normal: 'images/egbert.png', special:'', probability:20}],
-                    //{normal: 'images/francesca.png', special:'images/greenGlow.png', probability:12.5},
-                    //{normal: 'images/gertrude.png', special:'images/yellowGlow.png', probability:12.5},
-                    //{normal: 'images/hubert.png', special:'images/yellowGlow.png', probability:12.5}],
-                    //{normal: 'images/isabelle.png', special:'images/yellowGlow.png', probability:12.5}],
-                specialFive: 'images/x-pill.png',
-                matchSound: 'sounds/metalImpact2.ogg',
-                explosionSound: 'sounds/explosion1.ogg',
-                specialFiveSound: 'sounds/fiveSound.ogg',
-                itemLayer: self.layers.board,
-                bottomLayer: self.layers.boardBack,
-                topLayer: self.layers.boardFront,
-                gravity: 4000,
-                effectScale: 1.5,
-                sparkleAnimation: {name:'images/specialEffect1.png', numCellsX:5, numCellsY:4, speed:15, looping:false},
-                splashAnimation: {name:'images/shatter.png', numCellsX:5, numCellsY:5, speed:60, looping:false},
-                explosionAnimation: {name:'images/bigBoom.png', numCellsX:6, numCellsY:4, speed:30, looping:false},
-                specialFourAnimation: {name:'images/flash.png', numCellsX:4, numCellsY:3, speed:15, looping:true},
-                specialFiveAnimation: {name:'images/fiveEffect.png',numCellsX:5, numCellsY:4, speed:30, looping:false},
-                glowSize:16
-
-            }});
-
-            // Create the timer
-            var timerBarSprite = new Sprite('images/markerTime.png', self.layers.front); //self.layers.front
-            var timer = new SceneObject(timerBarSprite, Bar);
-            var timeRemainingLabel = new TextSprite('Time Remaining', '64px PT_Sans-Bold', 'white', 'left', self.layers.front);
-            timeRemainingLabel.setMaxWidth(100);
-            timeRemainingLabel.setLineSpacing(0.75);
-            //timer.setSpriteOffsets(timerOffset);
-            timer.removeOnGameOver = true;
-            timer.timePassed = 0;
-            timer.setPosition(350, -wade.getScreenHeight()/2 + 120);
-            timer.addSprite(timeRemainingLabel, {x:-400, y:-30});
-            timer.onUpdate = function () {
-                timer.timePassed += wade.c_timeStep;
-                var percent = (30 - timer.timePassed) / 30 * 100;
-            };
-            wade.addSceneObject(timer, true);
-            timer.getBehavior('Bar').init({bar: {size: {x: 0, y: 0},
-                timer: gameLength,
-                layer: self.layers.front,
-                reverse: true,
-                offset: {x:0,y:0},
-                spriteIndex: 1,
-                useGradient: true,
-                foreColor: ['#00FF00', '#FF0000'],
-                marker: '',
-                markerLayer: self.layers.front}});
-
-            wade.app.onScoreAdded = function(value)
-            {
-                //timer.getBehavior().addTime(value/300);
-            };
-
-            self.inGameButtons();
-
-            // Create score text
-            var scoreText = new TextSprite('Score:','64px PT_Sans-Bold', 'white', 'center', self.layers.front);
-            //scoreText.setShadow('#000000', 1, 2, 2);
-            var scoreT = new TextSprite('0', '64px PT_Sans-Regular', 'white', 'left', self.layers.front);
-            //scoreT.setShadow('#000000', 3, 0, 4);
-            self.scoreObject = new SceneObject(scoreT, Counter);
-            self.scoreObject.removeOnGameOver = true;
-            self.scoreObject.setPosition(-250, -wade.getScreenHeight()/2 + 120);
-            self.scoreObject.addSprite(scoreText, {x:-110, y:1});
-            wade.addSceneObject(self.scoreObject);
-
-            // Increment score
-            self.onMatch = function(match)
-            {
-                self.scoreObject.getBehavior().addValue(match.length*100);
-            };
+            createGame();
         };
         playButton.setPosition(0, -150);
         var menuFooterSprite = new Sprite('images/footer.png', self.layers.front);
@@ -429,6 +318,122 @@ App = function()
 
 
     };
+
+    createGame = function(){
+        wade.clearScene();
+        if(!self.musicMuted)
+        {
+            self.musicPlaying = true;
+            self.musicSource = wade.playAudio('sounds/Surreal-Chase.ogg', true);
+        }
+
+        // Draw background and foreground
+        var backgroundSprite = new Sprite('images/background.png', self.layers.background);
+        backgroundSprite.setSize(1080, 1920);
+        var gameTopSprite = new Sprite('images/gameTop.png', self.layers.front);
+
+        var graphics = new SceneObject(null);
+        graphics.addSprite(backgroundSprite, {x:0, y:wade.getScreenHeight()/2 - backgroundSprite.getSize().y/2});
+        graphics.addSprite(gameTopSprite, {x:0, y:-backgroundSprite.getSize().y/2 + 74}); // Evil magic numbers
+        graphics.removeOnGameOver = true;
+        wade.addSceneObject(graphics);
+
+        // Use Match3 behavior to create the game
+        this.theGame = new SceneObject(null, Match3);
+        wade.addSceneObject(this.theGame, true, {match3:
+        {
+            numCells: {x:7, y:10},
+            cellSize: {x:150, y:150},
+            margin: 5,
+            items: [
+            //     {normal: 'images/icon_caller.png', special:'', probability:20},
+            //     {normal: 'images/icon_heart.png', special:'', probability:20},
+            //     {normal: 'images/icon_info.png', special:'', probability:20},
+            //     {normal: 'images/icon_nurse.png', special:'', probability:20},
+            //     {normal: 'images/icon_percent.png', special:'', probability:20}],
+            //     //{normal: 'images/icon_pound.png', special:'images/greenGlow.png', probability:12.5},
+            //     //{normal: 'images/icon_ribbon.png', special:'images/yellowGlow.png', probability:12.5},
+            //     //{normal: 'images/icon_umbrella.png', special:'images/yellowGlow.png', probability:12.5}],
+            // specialFive: 'images/icon_bag.png',
+                {normal: 'images/alfred.png', special:'', probability:20},
+                {normal: 'images/bertie.png', special:'', probability:20},
+                {normal: 'images/carlton.png', special:'', probability:20},
+                {normal: 'images/denny.png', special:'', probability:20},
+                {normal: 'images/egbert.png', special:'', probability:20}],
+                //{normal: 'images/francesca.png', special:'images/greenGlow.png', probability:12.5},
+                //{normal: 'images/gertrude.png', special:'images/yellowGlow.png', probability:12.5},
+                //{normal: 'images/hubert.png', special:'images/yellowGlow.png', probability:12.5}],
+                //{normal: 'images/isabelle.png', special:'images/yellowGlow.png', probability:12.5}],
+            specialFive: 'images/x-pill.png',
+            matchSound: 'sounds/metalImpact2.ogg',
+            explosionSound: 'sounds/explosion1.ogg',
+            specialFiveSound: 'sounds/fiveSound.ogg',
+            itemLayer: self.layers.board,
+            bottomLayer: self.layers.boardBack,
+            topLayer: self.layers.boardFront,
+            gravity: 4000,
+            effectScale: 1.5,
+            sparkleAnimation: {name:'images/specialEffect1.png', numCellsX:5, numCellsY:4, speed:15, looping:false},
+            splashAnimation: {name:'images/shatter.png', numCellsX:5, numCellsY:5, speed:60, looping:false},
+            explosionAnimation: {name:'images/bigBoom.png', numCellsX:6, numCellsY:4, speed:30, looping:false},
+            specialFourAnimation: {name:'images/flash.png', numCellsX:4, numCellsY:3, speed:15, looping:true},
+            specialFiveAnimation: {name:'images/fiveEffect.png',numCellsX:5, numCellsY:4, speed:30, looping:false},
+            glowSize:16
+
+        }});
+
+        // Create the timer
+        var timerBarSprite = new Sprite('images/markerTime.png', self.layers.front); //self.layers.front
+        var timer = new SceneObject(timerBarSprite, Bar);
+        var timeRemainingLabel = new TextSprite('Time:', '64px PT_Sans-Bold', 'white', 'left', self.layers.front);
+        timeRemainingLabel.setMaxWidth(100);
+        timeRemainingLabel.setLineSpacing(0.75);
+        //timer.setSpriteOffsets(timerOffset);
+        timer.removeOnGameOver = true;
+        timer.timePassed = 0;
+        timer.setPosition(400, -wade.getScreenHeight()/2 + 115);
+        timer.addSprite(timeRemainingLabel, {x:-230, y:5});
+        timer.onUpdate = function () {
+            timer.timePassed += wade.c_timeStep;
+            var percent = (30 - timer.timePassed) / 30 * 100;
+        };
+        wade.addSceneObject(timer, true);
+        timer.getBehavior('Bar').init({bar: {size: {x: 0, y: 0},
+            timer: gameLength,
+            layer: self.layers.front,
+            reverse: true,
+            offset: {x:0,y:0},
+            spriteIndex: 1,
+            useGradient: true,
+            foreColor: ['#00FF00', '#FF0000'],
+            marker: '',
+            markerLayer: self.layers.front}});
+
+        wade.app.onScoreAdded = function(value)
+        {
+            //timer.getBehavior().addTime(value/300);
+        };
+
+        self.inGameButtons();
+
+        // Create score text
+        var scoreText = new TextSprite('Score:','64px PT_Sans-Bold', 'white', 'center', self.layers.front);
+        //scoreText.setShadow('#000000', 1, 2, 2);
+        var scoreT = new TextSprite('0', '64px PT_Sans-Regular', 'white', 'left', self.layers.front);
+        //scoreT.setShadow('#000000', 3, 0, 4);
+        self.scoreObject = new SceneObject(scoreT, Counter);
+        self.scoreObject.removeOnGameOver = true;
+        self.scoreObject.setPosition(-250, -wade.getScreenHeight()/2 + 120);
+        self.scoreObject.addSprite(scoreText, {x:-110, y:1});
+        wade.addSceneObject(self.scoreObject);
+
+        // Increment score
+        self.onMatch = function(match)
+        {
+            self.scoreObject.getBehavior().addValue(match.length*100);
+        };
+    }
+    
 
     /**
      * Creates the credits page
@@ -811,118 +816,8 @@ App = function()
                             {
                                 if ($('#personName').val() !== ""){
                                     addScore();
-                                    wade.clearScene();
-                                    if(!self.musicMuted)
-                                    {
-                                        self.musicPlaying = true;
-                                        self.musicSource = wade.playAudio('sounds/Surreal-Chase.ogg', true);
-                                    }
-
-                                    // Draw background and foreground
-                                    var backgroundSprite = new Sprite('images/background.png', self.layers.background);
-                                    backgroundSprite.setSize(1080, 1920);
-                                    var gameTopSprite = new Sprite('images/gameTop.png', self.layers.front);
-
-                                    var graphics = new SceneObject(null);
-                                    graphics.addSprite(backgroundSprite, {x:0, y:wade.getScreenHeight()/2 - backgroundSprite.getSize().y/2});
-                                    graphics.addSprite(gameTopSprite, {x:0, y:-backgroundSprite.getSize().y/2 + 74}); // Evil magic numbers
-                                    graphics.removeOnGameOver = true;
-                                    wade.addSceneObject(graphics);
-
-                                    // Use Match3 behavior to create the game
-                                    this.theGame = new SceneObject(null, Match3);
-                                    wade.addSceneObject(this.theGame, true, {match3:
-                                    {
-                                        numCells: {x:7, y:10},
-                                        cellSize: {x:150, y:150},
-                                        margin: 5,
-                                        items: [
-                                        //     {normal: 'images/icon_caller.png', special:'', probability:20},
-                                        //     {normal: 'images/icon_heart.png', special:'', probability:20},
-                                        //     {normal: 'images/icon_info.png', special:'', probability:20},
-                                        //     {normal: 'images/icon_nurse.png', special:'', probability:20},
-                                        //     {normal: 'images/icon_percent.png', special:'', probability:20}],
-                                        //     //{normal: 'images/icon_pound.png', special:'images/greenGlow.png', probability:12.5},
-                                        //     //{normal: 'images/icon_ribbon.png', special:'images/yellowGlow.png', probability:12.5},
-                                        //     //{normal: 'images/icon_umbrella.png', special:'images/yellowGlow.png', probability:12.5}],
-                                        // specialFive: 'images/icon_bag.png',
-                                            {normal: 'images/alfred.png', special:'', probability:20},
-                                            {normal: 'images/bertie.png', special:'', probability:20},
-                                            {normal: 'images/carlton.png', special:'', probability:20},
-                                            {normal: 'images/denny.png', special:'', probability:20},
-                                            {normal: 'images/egbert.png', special:'', probability:20}],
-                                            //{normal: 'images/francesca.png', special:'images/greenGlow.png', probability:12.5},
-                                            //{normal: 'images/gertrude.png', special:'images/yellowGlow.png', probability:12.5},
-                                            //{normal: 'images/hubert.png', special:'images/yellowGlow.png', probability:12.5}],
-                                            //{normal: 'images/isabelle.png', special:'images/yellowGlow.png', probability:12.5}],
-                                        specialFive: 'images/x-pill.png',
-                                        matchSound: 'sounds/metalImpact2.ogg',
-                                        explosionSound: 'sounds/explosion1.ogg',
-                                        specialFiveSound: 'sounds/fiveSound.ogg',
-                                        itemLayer: self.layers.board,
-                                        bottomLayer: self.layers.boardBack,
-                                        topLayer: self.layers.boardFront,
-                                        gravity: 4000,
-                                        effectScale: 1.5,
-                                        sparkleAnimation: {name:'images/specialEffect1.png', numCellsX:5, numCellsY:4, speed:15, looping:false},
-                                        splashAnimation: {name:'images/shatter.png', numCellsX:5, numCellsY:5, speed:60, looping:false},
-                                        explosionAnimation: {name:'images/bigBoom.png', numCellsX:6, numCellsY:4, speed:30, looping:false},
-                                        specialFourAnimation: {name:'images/flash.png', numCellsX:4, numCellsY:3, speed:15, looping:true},
-                                        specialFiveAnimation: {name:'images/fiveEffect.png',numCellsX:5, numCellsY:4, speed:30, looping:false},
-                                        glowSize:16
-
-                                    }});
-
-                                    // Create the timer
-                                    var timerBarSprite = new Sprite('images/markerTime.png', self.layers.front); //self.layers.front
-                                    var timer = new SceneObject(timerBarSprite, Bar);
-                                    var timeRemainingLabel = new TextSprite('Time Remaining', '64px PT_Sans-Bold', 'white', 'left', self.layers.front);
-                                    timeRemainingLabel.setMaxWidth(100);
-                                    timeRemainingLabel.setLineSpacing(0.75);
-                                    //timer.setSpriteOffsets(timerOffset);
-                                    timer.removeOnGameOver = true;
-                                    timer.timePassed = 0;
-                                    timer.setPosition(350, -wade.getScreenHeight()/2 + 120);
-                                    timer.addSprite(timeRemainingLabel, {x:-400, y:-30});
-                                    timer.onUpdate = function () {
-                                        timer.timePassed += wade.c_timeStep;
-                                        var percent = (30 - timer.timePassed) / 30 * 100;
-                                    };
-                                    wade.addSceneObject(timer, true);
-                                    timer.getBehavior('Bar').init({bar: {size: {x: 0, y: 0},
-                                        timer: gameLength,
-                                        layer: self.layers.front,
-                                        reverse: true,
-                                        offset: {x:0,y:0},
-                                        spriteIndex: 1,
-                                        useGradient: true,
-                                        foreColor: ['#00FF00', '#FF0000'],
-                                        marker: '',
-                                        markerLayer: self.layers.front}});
-
-                                    wade.app.onScoreAdded = function(value)
-                                    {
-                                        //timer.getBehavior().addTime(value/300);
-                                    };
-
-                                    self.inGameButtons();
-
-                                    // Create score text
-                                    var scoreText = new TextSprite('Score:','64px PT_Sans-Bold', 'white', 'center', self.layers.front);
-                                    //scoreText.setShadow('#000000', 1, 2, 2);
-                                    var scoreT = new TextSprite('0', '64px PT_Sans-Regular', 'white', 'left', self.layers.front);
-                                    //scoreT.setShadow('#000000', 3, 0, 4);
-                                    self.scoreObject = new SceneObject(scoreT, Counter);
-                                    self.scoreObject.removeOnGameOver = true;
-                                    self.scoreObject.setPosition(-250, -wade.getScreenHeight()/2 + 120);
-                                    self.scoreObject.addSprite(scoreText, {x:-110, y:1});
-                                    wade.addSceneObject(self.scoreObject);
-
-                                    // Increment score
-                                    self.onMatch = function(match)
-                                    {
-                                        self.scoreObject.getBehavior().addValue(match.length*100);
-                                    };
+                                    //create game
+                                    createGame();
                                 }
                                 else
                                 {
@@ -1006,119 +901,8 @@ App = function()
                                 $('#personName').val("");
                                 wade.storeLocalObject("match3Scores", self.scores);
 
-                                wade.clearScene();
-                                if(!self.musicMuted)
-                                {
-                                    self.musicPlaying = true;
-                                    self.musicSource = wade.playAudio('sounds/Surreal-Chase.ogg', true);
-                                }
-
-                                // Draw background and foreground
-                                var backgroundSprite = new Sprite('images/background.png', self.layers.background);
-                                backgroundSprite.setSize(1080, 1920);
-                                var gameTopSprite = new Sprite('images/gameTop.png', self.layers.front);
-
-                                var graphics = new SceneObject(null);
-                                graphics.addSprite(backgroundSprite, {x:0, y:wade.getScreenHeight()/2 - backgroundSprite.getSize().y/2});
-                                graphics.addSprite(gameTopSprite, {x:0, y:-backgroundSprite.getSize().y/2 + 74}); // Evil magic numbers
-                                graphics.removeOnGameOver = true;
-                                wade.addSceneObject(graphics);
-
-                                // Use Match3 behavior to create the game
-                                this.theGame = new SceneObject(null, Match3);
-                                wade.addSceneObject(this.theGame, true, {match3:
-                                {
-                                    numCells: {x:7, y:10},
-                                    cellSize: {x:150, y:150},
-                                    margin: 5,
-                                    items: [
-                                    //     {normal: 'images/icon_caller.png', special:'', probability:20},
-                                    //     {normal: 'images/icon_heart.png', special:'', probability:20},
-                                    //     {normal: 'images/icon_info.png', special:'', probability:20},
-                                    //     {normal: 'images/icon_nurse.png', special:'', probability:20},
-                                    //     {normal: 'images/icon_percent.png', special:'', probability:20}],
-                                    //     //{normal: 'images/icon_pound.png', special:'images/greenGlow.png', probability:12.5},
-                                    //     //{normal: 'images/icon_ribbon.png', special:'images/yellowGlow.png', probability:12.5},
-                                    //     //{normal: 'images/icon_umbrella.png', special:'images/yellowGlow.png', probability:12.5}],
-                                    // specialFive: 'images/icon_bag.png',
-                                        {normal: 'images/alfred.png', special:'', probability:20},
-                                        {normal: 'images/bertie.png', special:'', probability:20},
-                                        {normal: 'images/carlton.png', special:'', probability:20},
-                                        {normal: 'images/denny.png', special:'', probability:20},
-                                        {normal: 'images/egbert.png', special:'', probability:20}],
-                                        //{normal: 'images/francesca.png', special:'images/greenGlow.png', probability:12.5},
-                                        //{normal: 'images/gertrude.png', special:'images/yellowGlow.png', probability:12.5},
-                                        //{normal: 'images/hubert.png', special:'images/yellowGlow.png', probability:12.5}],
-                                        //{normal: 'images/isabelle.png', special:'images/yellowGlow.png', probability:12.5}],
-                                    specialFive: 'images/x-pill.png',
-                                    matchSound: 'sounds/metalImpact2.ogg',
-                                    explosionSound: 'sounds/explosion1.ogg',
-                                    specialFiveSound: 'sounds/fiveSound.ogg',
-                                    itemLayer: self.layers.board,
-                                    bottomLayer: self.layers.boardBack,
-                                    topLayer: self.layers.boardFront,
-                                    gravity: 4000,
-                                    effectScale: 1.5,
-                                    sparkleAnimation: {name:'images/specialEffect1.png', numCellsX:5, numCellsY:4, speed:15, looping:false},
-                                    splashAnimation: {name:'images/shatter.png', numCellsX:5, numCellsY:5, speed:60, looping:false},
-                                    explosionAnimation: {name:'images/bigBoom.png', numCellsX:6, numCellsY:4, speed:30, looping:false},
-                                    specialFourAnimation: {name:'images/flash.png', numCellsX:4, numCellsY:3, speed:15, looping:true},
-                                    specialFiveAnimation: {name:'images/fiveEffect.png',numCellsX:5, numCellsY:4, speed:30, looping:false},
-                                    glowSize:16
-
-                                }});
-
-                                // Create the timer
-                                var timerBarSprite = new Sprite('images/markerTime.png', self.layers.front); //self.layers.front
-                                var timer = new SceneObject(timerBarSprite, Bar);
-                                var timeRemainingLabel = new TextSprite('Time Remaining', '64px PT_Sans-Bold', 'white', 'left', self.layers.front);
-                                timeRemainingLabel.setMaxWidth(100);
-                                timeRemainingLabel.setLineSpacing(0.75);
-                                //timer.setSpriteOffsets(timerOffset);
-                                timer.removeOnGameOver = true;
-                                timer.timePassed = 0;
-                                timer.setPosition(350, -wade.getScreenHeight()/2 + 120);
-                                timer.addSprite(timeRemainingLabel, {x:-400, y:-30});
-                                timer.onUpdate = function () {
-                                    timer.timePassed += wade.c_timeStep;
-                                    var percent = (30 - timer.timePassed) / 30 * 100;
-                                };
-                                wade.addSceneObject(timer, true);
-                                timer.getBehavior('Bar').init({bar: {size: {x: 0, y: 0},
-                                    timer: gameLength,
-                                    layer: self.layers.front,
-                                    reverse: true,
-                                    offset: {x:0,y:0},
-                                    spriteIndex: 1,
-                                    useGradient: true,
-                                    foreColor: ['#00FF00', '#FF0000'],
-                                    marker: '',
-                                    markerLayer: self.layers.front}});
-
-                                wade.app.onScoreAdded = function(value)
-                                {
-                                    //timer.getBehavior().addTime(value/300);
-                                };
-
-                                self.inGameButtons();
-
-                                // Create score text
-                                var scoreText = new TextSprite('Score:','64px PT_Sans-Bold', 'white', 'center', self.layers.front);
-                                //scoreText.setShadow('#000000', 1, 2, 2);
-                                var scoreT = new TextSprite('0', '64px PT_Sans-Regular', 'white', 'left', self.layers.front);
-                                //scoreT.setShadow('#000000', 3, 0, 4);
-                                self.scoreObject = new SceneObject(scoreT, Counter);
-                                self.scoreObject.removeOnGameOver = true;
-                                self.scoreObject.setPosition(-250, -wade.getScreenHeight()/2 + 120);
-                                self.scoreObject.addSprite(scoreText, {x:-110, y:1});
-                                wade.addSceneObject(self.scoreObject);
-
-                                // Increment score
-                                self.onMatch = function(match)
-                                {
-                                    self.scoreObject.getBehavior().addValue(match.length*100);
-                                };
-                                
+                                // create game
+                                createGame();                                
                             };
                             submitButton.setPosition(0, wade.getScreenHeight()/4 + 40);
                             submitButtonsprite.setDrawFunction(wade.drawFunctions.fadeOpacity_(0, 1, 0.5, submitButtonsprite.getDrawFunction()));                            
@@ -1144,18 +928,9 @@ App = function()
 
                             backButton.onMouseUp = function() // go home
                             {
-                                if ($('#personName').val() !== ""){
-                                    addScore();
-                                    wade.clearScene();
-                                    self.game();
-                                }
-                                else
-                                {
-                                    var nameErrorText = new TextSprite('Enter a name champ!','32px PT_Sans-Regular', 'yellow', 'center', self.layers.front);
-                                    var nameError = new SceneObject(nameErrorText);
-                                    nameError.setPosition(0, 420);
-                                    wade.addSceneObject(nameError);
-                                }
+                                addScore();
+                                wade.clearScene();
+                                self.game();
                             }
 
                             wade.addSceneObject(backButton, true);
