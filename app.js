@@ -385,7 +385,7 @@ App = function()
         // Create the timer
         var timerBarSprite = new Sprite('images/markerTime.png', self.layers.front); //self.layers.front
         var timer = new SceneObject(timerBarSprite, Bar);
-        var timeRemainingLabel = new TextSprite('Time:', '64px PT_Sans-Bold', 'white', 'left', self.layers.front);
+        var timeRemainingLabel = new TextSprite('Time ', '64px PT_Sans-Bold', 'white', 'left', self.layers.front);
         timeRemainingLabel.setMaxWidth(100);
         timeRemainingLabel.setLineSpacing(0.75);
         //timer.setSpriteOffsets(timerOffset);
@@ -417,7 +417,7 @@ App = function()
         self.inGameButtons();
 
         // Create score text
-        var scoreText = new TextSprite('Score:','64px PT_Sans-Bold', 'white', 'center', self.layers.front);
+        var scoreText = new TextSprite('Score','64px PT_Sans-Bold', 'white', 'center', self.layers.front);
         //scoreText.setShadow('#000000', 1, 2, 2);
         var scoreT = new TextSprite('0', '64px PT_Sans-Regular', 'white', 'left', self.layers.front);
         //scoreT.setShadow('#000000', 3, 0, 4);
@@ -780,7 +780,7 @@ App = function()
             timeOutSprite.setDrawFunction(wade.drawFunctions.fadeOpacity_(0.0, 1.0, 2.0, timeOutSprite.getDrawFunction(),function()
             {
                 // You Scored message
-                var totalScoreText = new TextSprite('Total Score: ','42px PT_Sans-regular', fvr_pink, 'center', self.layers.front);
+                var totalScoreText = new TextSprite('Total Score','42px PT_Sans-regular', fvr_pink, 'center', self.layers.front);
                 totalScoreText.cache();
                 totalScoreText.setDrawFunction(wade.drawFunctions.fadeOpacity_(0.0, 1.0, 1.0, timeOutSprite.getDrawFunction(), function()
                 {
@@ -937,7 +937,7 @@ App = function()
 
                         }
                     }));
-                    titleObject.addSprite(totalScoreNumber, {x:-210, y: -275});
+                    titleObject.addSprite(totalScoreNumber, {x:-210, y: -285});
                 }));
                 titleObject.addSprite(totalScoreText, {x:-100, y: -425});
             }));
