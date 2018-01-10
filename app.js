@@ -2,7 +2,7 @@
 App = function()
 {
     var self = this; // Main app context
-    var gameLength = 10;
+    var gameLength = 60;
 
     // Layers to use for rendering
     this.layers = {background:17, boardBack:16, board:15, boardFront:14, front:13};
